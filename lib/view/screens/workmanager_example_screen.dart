@@ -1,9 +1,46 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:workmanager/workmanager.dart';
 import 'package:workmanager_tutorial/data/models/data_model.dart';
 import 'package:workmanager_tutorial/data/repository/data_repository.dart';
 
-class WorkmanagerExampleScreen extends StatelessWidget {
+class WorkmanagerExampleScreen extends StatefulWidget {
   const WorkmanagerExampleScreen({super.key});
+
+  @override
+  State<WorkmanagerExampleScreen> createState() =>
+      _WorkmanagerExampleScreenState();
+}
+
+class _WorkmanagerExampleScreenState extends State<WorkmanagerExampleScreen> {
+  @override
+  void initState() {
+    askLocationPermission();
+    super.initState();
+  }
+
+  askLocationPermission() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      await Geolocator.openLocationSettings();
+      return Future.error('Location services are disabled.');
+    }
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permissions are denied');
+      }
+    }
+
+    Workmanager().registerOneOffTask(
+      "task-identifier",
+      "GET Location",
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

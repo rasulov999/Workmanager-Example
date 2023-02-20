@@ -13,8 +13,8 @@ class DataModel {
     required this.dateTime,
   });
   int? id;
-  final String lat;
-  final String lon;
+  final dynamic lat;
+  final dynamic lon;
   final String dateTime;
 
   factory DataModel.fromJson(Map<String, dynamic> json) {
