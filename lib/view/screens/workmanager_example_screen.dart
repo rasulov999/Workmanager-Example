@@ -39,6 +39,7 @@ class _WorkmanagerExampleScreenState extends State<WorkmanagerExampleScreen> {
     Workmanager().registerOneOffTask(
       "task-identifier",
       "GET Location",
+      // frequency: const Duration(minutes: 16)
     );
   }
 
@@ -48,9 +49,18 @@ class _WorkmanagerExampleScreenState extends State<WorkmanagerExampleScreen> {
       appBar: AppBar(
         title: const Text("Workmanager Example"),
         centerTitle: true,
+        actions: [
+          IconButton(
+            onPressed: () {
+              Workmanager()
+                  .registerOneOffTask("task-identifier", "NEW COUNTER TASK");
+            },
+            icon: const Icon(Icons.add),
+          ),
+        ],
       ),
-      body: FutureBuilder(
-        future: DataRepository().getDatalist(),
+      body: StreamBuilder(
+        stream: DataRepository().getDatalist().asStream(),
         builder:
             (BuildContext context, AsyncSnapshot<List<DataModel>> snapshot) {
           if (snapshot.hasData) {

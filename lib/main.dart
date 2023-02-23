@@ -11,18 +11,33 @@ import 'package:workmanager_tutorial/view/screens/workmanager_example_screen.dar
 
 void callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {
-    try {
-      Position currentPosition = await Geolocator.getCurrentPosition();
-      await DataRepository().insertToDb(
-        DataModel(
+    if (task == "GET Location") {
+      try {
+        Position currentPosition = await Geolocator.getCurrentPosition();
+
+        var dataModel = DataModel(
           lat: currentPosition.latitude,
           lon: currentPosition.longitude,
           dateTime: DateTime.now().toString(),
-        ),
-      );
-    } catch (err) {
-      Logger().e(err.toString());
-      throw Exception(err);
+        );
+        await DataRepository().insertToDb(dataModel);
+        // for (int i = 0; i <= 150; i++) {
+        //   await DataRepository().insertToDb(dataModel);
+        // }
+      } catch (err) {
+        Logger().e(err.toString());
+        throw Exception(err);
+      }
+      return Future.value(true);
+    } else if (task == "NEW COUNTER TASK") {
+      debugPrint(
+          "=====================NEW Task Starts==============================");
+      int newValue = 0;
+      for (int i = 0; i <= 10; i++) {
+        newValue == i;
+        debugPrint(newValue.toString());
+      }
+      return Future.value(true);
     }
 
     return Future.value(true);
@@ -32,7 +47,7 @@ void callbackDispatcher() {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
-  
+
   runApp(const MyApp());
 }
 
